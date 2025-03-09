@@ -1,0 +1,605 @@
+@import "./styles/reset.scss";
+@import "./styles/variables.scss";
+
+@mixin btnStyle {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+@mixin btnDetail {
+  content: "";
+  width: 100%;
+  height: 1px;
+  background: map-get($map: $color, $key: light);
+  position: absolute;
+  left: 0;
+  transition: all 0.5s;
+}
+
+figure {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  // background-image: linear-gradient(to top, #30cfd0 0%, #330867 100%);
+  video {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  .menu {
+    position: absolute;
+    top: 8vh;
+    right: 4vw;
+    color: map-get($map: $color, $key: light);
+    font-size: 2.4rem;
+  }
+  & > h1 {
+    position: absolute;
+    top: 7vh;
+    left: 4vw;
+    font-size: 0;
+    strong {
+      color: map-get($map: $color, $key: light);
+      letter-spacing: 1px;
+      font: bold 5rem/1.4 "arial";
+    }
+    span {
+      font: normal 1rem/1 "arial";
+      display: block;
+      letter-spacing: 2px;
+      color: map-get($map: $color, $key: light);
+      opacity: 0.8;
+      text-align: end;
+    }
+  }
+  & > p {
+    position: absolute;
+    bottom: 7vh;
+    left: 50%;
+    transform: translateX(-50%);
+    letter-spacing: 2px;
+    opacity: 0.8;
+    color: map-get($map: $color, $key: light);
+    font: normal 1.2rem/1 "arial";
+  }
+  img {
+    position: absolute;
+    top: -11.5%;
+    left: 50%;
+    width: 44%;
+    transform: translateX(-49%);
+  }
+  section {
+    width: 20vw;
+    height: 65vh;
+    border: 1px solid #faebd7;
+    position: absolute;
+    top: 140%;
+    left: 50%;
+    margin-left: -10vw;
+    margin-top: -25vh; // 마진으로 주는것이 가장 안전 => 후에 트랜스폼은 우선순위가 있기때문에 충돌남
+    transform-origin: center center;
+    transition: transform 0.5s ease;
+    article {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      .txt {
+        opacity: 1;
+        .progress-container,
+        ul,
+        audio {
+          opacity: 0;
+        }
+      }
+      &.on {
+        .inner {
+          opacity: 1;
+          transform: scale(1.1);
+        }
+        .txt {
+          .progress-container,
+          ul,
+          audio {
+            opacity: 1;
+          }
+        }
+      }
+      .inner {
+        width: 100%;
+        height: 100%;
+        background: map-get($map: $color, $key: space);
+        padding: 2vh 2.5vw 2vh;
+        display: flex;
+        justify-content: center;
+        align-content: space-evenly; // 두개씩 서로 양쪽끝으로 가서 대칭이 되게끔
+        border-radius: 10px;
+        // box-shadow: 10px 10px 20px rgba($color: #000000, $alpha: 0.1);
+        flex-wrap: wrap;
+        opacity: 0.6;
+        transform: scale(0.8);
+        transition: opacity 1s, transform 1s;
+        background: none;
+
+        .pic {
+          width: 15vw;
+          height: 15vw;
+          border: 1px solid #ccc;
+          border-radius: 50%;
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-position: center;
+          background-size: cover;
+          background-repeat: no-repeat;
+          &::before,
+          &::after {
+            content: "";
+            width: inherit;
+            height: inherit;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-image: inherit;
+            background-position: inherit;
+            background-size: inherit;
+            background-repeat: inherit;
+          }
+          &::before {
+            content: "";
+            transform: translateY(10%);
+            filter: blur(20px) brightness(1.6);
+          }
+          &.on::after {
+            animation: ani 4s linear infinite;
+          }
+          &.on::before {
+            animation: ani2 4s linear infinite;
+          }
+          .dot1 {
+            width: 4vw;
+            height: 4vw;
+            background: map-get($map: $color, $key: dot);
+            z-index: 3;
+            border-radius: 50%;
+            box-shadow: inset 5px 5px 10px rgba($color: #000000, $alpha: 0.1); // 그림자가 안쪽으로 파고들수 있게 inset
+            position: relative;
+            .dot2 {
+              width: 1.5vw;
+              height: 1.5vw;
+              background: map-get($map: $color, $key: title);
+              z-index: 3;
+              border-radius: 50%;
+              box-shadow: inset 5px 5px 10px rgba($color: #000000, $alpha: 0.1);
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              .dot3 {
+                width: 0.1vw;
+                height: 0.1vw;
+                background: map-get($map: $color, $key: light);
+                z-index: 3;
+                border-radius: 50%;
+                box-shadow: inset 5px 5px 10px rgba($color: #fff, $alpha: 0.1);
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+              }
+            }
+          }
+        }
+        .txt {
+          text-align: center;
+          width: 100%;
+          .progress-container {
+            width: 100%;
+            height: 10px;
+            border-radius: 10px;
+            background: #ccc;
+            position: relative;
+            margin-bottom: 40px;
+            cursor: pointer;
+            .progress-bar {
+              width: 0%;
+              height: 100%;
+              border-radius: 10px;
+              margin-top: 60px;
+              background: map-get($map: $color, $key: orange);
+              transition: width 0.1s;
+              position: relative;
+              .circle {
+                width: 15px;
+                height: 15px;
+                background: map-get($map: $color, $key: orange);
+                border-radius: 50%;
+                position: absolute;
+                top: 50%;
+                right: -7.5px;
+                transform: translateY(-50%);
+                opacity: 1;
+                transition: opacity 0.5s;
+                cursor: pointer;
+                z-index: 5;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+                &:active {
+                  cursor: pointer; /* 드래그 중일 때 커서 스타일 */
+                }
+              }
+            }
+            .time {
+              font-size: 1.4rem;
+              display: flex;
+              color: map-get($map: $color, $key: font);
+              justify-content: space-between;
+            }
+          }
+          h2 {
+            font-size: 2rem;
+            color: map-get($map: $color, $key: light);
+          }
+          p {
+            font-size: 1.4rem;
+            margin: 2vh 0 3vh;
+            color: map-get($map: $color, $key: font);
+          }
+          ul {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30%;
+            color: #f6f0f0;
+            li {
+              cursor: pointer;
+              opacity: 0.6;
+              transition: all 0.5s;
+              &.play {
+                transform: scale(2.5);
+                opacity: 0.9;
+                &:hover {
+                  transform: scale(3);
+                  opacity: 1;
+                }
+              }
+              &:hover {
+                opacity: 1;
+                transform: scale(1.5);
+              }
+              .active-repeat {
+                color: #ff6b6b !important;
+              }
+            }
+          }
+        }
+      }
+    }
+    transition: all 1s;
+  }
+  .btnPrev {
+    @include btnStyle;
+    text-align: left;
+    left: 50%;
+    transform: translate(-20vw, -50%); // 혼용해서 써도 된다.
+
+    &:hover {
+      span {
+        opacity: 0;
+        transform: translateX(100%); // 자신의 크기만큼 양수값으로
+      }
+      &::before {
+        transform: rotate(-30deg);
+      }
+      &::after {
+        transform: rotate(30deg);
+      }
+    }
+    span {
+      color: map-get($map: $color, $key: light);
+      font: normal 1.2rem/1 "arial";
+      opacity: 1;
+      transform: translateX(30%);
+      transition: all 0.5s;
+    }
+    &::before {
+      @include btnDetail;
+      top: 50%;
+      transform: rotate(-180deg);
+      transform-origin: left center; // 중심축 설정을 변경하는 요소
+    }
+    &::after {
+      @include btnDetail;
+      bottom: 50%;
+      transform: rotate(180deg);
+      transform-origin: left center;
+    }
+  }
+  .btnNext {
+    @include btnStyle;
+    text-align: right;
+    right: 50%;
+    transform: translate(20vw, -50%); // 혼용해서 써도 된다.
+    &:hover {
+      span {
+        opacity: 0;
+        transform: translateX(-100%);
+      }
+      &::before {
+        transform: rotate(-30deg);
+      }
+      &::after {
+        transform: rotate(30deg);
+      }
+    }
+    span {
+      color: map-get($map: $color, $key: light);
+      font: normal 1.2rem/1 "arial";
+      opacity: 1;
+      transform: translateX(-30%);
+      transition: all 0.5s;
+    }
+    &::before {
+      @include btnDetail;
+      top: 50%;
+      transform: rotate(-180deg);
+      transform-origin: right center; // 중심축 설정을 변경하는 요소
+    }
+    &::after {
+      @include btnDetail;
+      bottom: 50%;
+      transform: rotate(180deg);
+      transform-origin: right center;
+    }
+  }
+}
+
+@keyframes ani {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ani2 {
+  0% {
+    transform: translateY(10%) rotate(0deg);
+  }
+  100% {
+    transform: translateY(10%) rotate(360deg);
+  }
+}
+
+// 기존 SCSS 코드 맨 아래에 추가
+
+// 모니터 버전 (1920px × 1080px - Full HD 기준)
+// 기존 스타일이 이미 데스크탑용으로 작성되어 있으므로 여기서는 특별한 미디어 쿼리가 필요 없음
+
+// 태블릿 버전 (768px × 1024px - iPad 기준)
+@media screen and (max-width: 1024px) {
+  figure {
+    img {
+      width: 85%;
+      top: 30px;
+      background-position: center;
+    }
+
+    section {
+      width: 40vw;
+      margin-left: -20vw;
+
+      article {
+        .inner {
+          .pic {
+            width: 30vw;
+            height: 30vw;
+
+            .dot1 {
+              width: 8vw;
+              height: 8vw;
+
+              .dot2 {
+                width: 3vw;
+                height: 3vw;
+
+                .dot3 {
+                  width: 0.2vw;
+                  height: 0.2vw;
+                }
+              }
+            }
+          }
+
+          .txt {
+            h2 {
+              font-size: 1.8rem;
+            }
+
+            p {
+              font-size: 1.2rem;
+            }
+
+            .progress-container {
+              margin-bottom: 30px;
+
+              .time {
+                font-size: 1.2rem;
+              }
+            }
+
+            ul {
+              gap: 20%;
+
+              li.play {
+                transform: scale(2);
+
+                &:hover {
+                  transform: scale(2.5);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .btnPrev {
+      transform: translate(-30vw, -50%);
+    }
+
+    .btnNext {
+      transform: translate(30vw, -50%);
+    }
+  }
+}
+
+// 모바일 버전 (360px × 800px 기준)
+@media screen and (max-width: 768px) {
+  figure {
+    overflow-y: auto;
+
+    > h1 {
+      strong {
+        font-size: 3rem;
+      }
+
+      span {
+        font-size: 0.8rem;
+      }
+    }
+
+    .menu {
+      top: 6vh;
+      right: 5vw;
+      font-size: 1.8rem;
+    }
+
+    img {
+      width: 115%;
+      top: 10px;
+      background-position: center;
+    }
+
+    section {
+      width: 80vw;
+      height: 70vh;
+      margin-left: -40vw;
+      border: none;
+
+      article {
+        .inner {
+          padding: 1vh 4vw;
+
+          .pic {
+            width: 40vw;
+            height: 40vw;
+
+            .dot1 {
+              width: 15vw;
+              height: 15vw;
+
+              .dot2 {
+                width: 6vw;
+                height: 6vw;
+
+                .dot3 {
+                  width: 0.4vw;
+                  height: 0.4vw;
+                }
+              }
+            }
+          }
+
+          .txt {
+            h2 {
+              font-size: 1.5rem;
+              margin-top: 15px;
+            }
+
+            p {
+              font-size: 1rem;
+              margin: 1vh 0 2vh;
+            }
+
+            .progress-container {
+              margin-bottom: 20px;
+
+              .progress-bar {
+                margin-top: 40px;
+
+                .circle {
+                  width: 18px;
+                  height: 18px;
+                  right: -9px;
+                  border: 2px solid white;
+                  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+                }
+              }
+
+              .time {
+                font-size: 1rem;
+              }
+            }
+
+            ul {
+              gap: 15%;
+
+              li.play {
+                transform: scale(1.8);
+
+                &:hover {
+                  transform: scale(2);
+                }
+              }
+
+              li:hover {
+                transform: scale(1.2);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .btnPrev,
+    .btnNext {
+      width: 40px;
+      height: 40px;
+    }
+
+    .btnPrev {
+      transform: translate(-45vw, -50%);
+
+      span {
+        font-size: 0.9rem;
+      }
+    }
+
+    .btnNext {
+      transform: translate(45vw, -50%);
+
+      span {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// 추가: 전체적인 반응형 요소 개선
+@media (hover: hover) {
+  // 호버 기능이 있는 기기에서만 호버 효과 적용
+  .progress-container:hover .circle {
+    transform: translateY(-50%) scale(1.2);
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.7);
+  }
+}
