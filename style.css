@@ -204,7 +204,7 @@ figure section article .inner .txt {
 }
 figure section article .inner .txt .progress-container {
   width: 100%;
-  height: 10px;
+  height: 5px;
   border-radius: 10px;
   background: #ccc;
   position: relative;
@@ -216,14 +216,14 @@ figure section article .inner .txt .progress-container .progress-bar {
   height: 100%;
   border-radius: 10px;
   margin-top: 60px;
-  background: #fca311;
+  background: #0096ff;
   transition: width 0.1s;
   position: relative;
 }
 figure section article .inner .txt .progress-container .progress-bar .circle {
-  width: 15px;
-  height: 15px;
-  background: #fca311;
+  width: 12px;
+  height: 12px;
+  background: #0096ff;
   border-radius: 50%;
   position: absolute;
   top: 50%;
@@ -233,7 +233,7 @@ figure section article .inner .txt .progress-container .progress-bar .circle {
   transition: opacity 0.5s;
   cursor: pointer;
   z-index: 5;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 8px #333333;
 }
 figure section article .inner .txt .progress-container .progress-bar .circle:active {
   cursor: pointer; /* 드래그 중일 때 커서 스타일 */

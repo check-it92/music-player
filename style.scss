@@ -204,7 +204,7 @@ figure {
           width: 100%;
           .progress-container {
             width: 100%;
-            height: 10px;
+            height: 5px;
             border-radius: 10px;
             background: #ccc;
             position: relative;
@@ -215,13 +215,13 @@ figure {
               height: 100%;
               border-radius: 10px;
               margin-top: 60px;
-              background: map-get($map: $color, $key: orange);
+              background: #0096ff;
               transition: width 0.1s;
               position: relative;
               .circle {
-                width: 15px;
-                height: 15px;
-                background: map-get($map: $color, $key: orange);
+                width: 12px;
+                height: 12px;
+                background: #0096ff;
                 border-radius: 50%;
                 position: absolute;
                 top: 50%;
@@ -231,7 +231,7 @@ figure {
                 transition: opacity 0.5s;
                 cursor: pointer;
                 z-index: 5;
-                box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+                box-shadow: 0 0 8px rgba($color: #333, $alpha: 1);
                 &:active {
                   cursor: pointer; /* 드래그 중일 때 커서 스타일 */
                 }

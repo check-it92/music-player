@@ -10,13 +10,56 @@ const next = document.querySelector(".btnNext");
 // activeAudio 변수 위치 이동
 let activeAudio = null;
 
+// 공통으로 사용할 handleAudioEnd 함수 정의
+function handleAudioEnd() {
+  if (!activeAudio) return;
+
+  const currentArticle = activeAudio.closest("article");
+  const activePic = currentArticle.querySelector(".pic");
+  activePic.classList.remove("on");
+
+  const articles = [...document.querySelectorAll("article")];
+  let currentIndex = articles.findIndex((el) => el.classList.contains("on"));
+  let nextIndex = (currentIndex + 1) % articles.length; // 마지막에서 처음으로
+
+  const nextArticle = articles[nextIndex];
+  const nextAudio = nextArticle.querySelector("audio");
+  const nextPic = nextArticle.querySelector(".pic");
+  const nextPlayIcon = nextArticle.querySelector(".play i");
+
+  // 현재 article에서 on 클래스 제거
+  currentArticle.classList.remove("on");
+
+  // 다음 article에 on 클래스 추가
+  nextArticle.classList.add("on");
+
+  // 재생 버튼 아이콘 상태 업데이트
+  const currentPlayIcon = currentArticle.querySelector(".play i");
+  if (currentPlayIcon) {
+    currentPlayIcon.classList.remove("fa-circle-pause");
+    currentPlayIcon.classList.add("fa-circle-play");
+  }
+
+  if (nextPlayIcon) {
+    nextPlayIcon.classList.remove("fa-circle-play");
+    nextPlayIcon.classList.add("fa-circle-pause");
+  }
+
+  // 다음 오디오 재생
+  activeAudio = nextAudio;
+  nextAudio.play();
+  nextPic.classList.add("on");
+
+  // 프로그레스바 업데이트
+  updateProgressBar(nextAudio, nextArticle.querySelector(".progress-bar"));
+}
+
 // article 로테이션 설정
 const deg = 45;
 let i = 0;
 lists.forEach((list) => {
   const pic = list.querySelector(".pic");
   const play = list.querySelector(".play");
-  const pause = list.querySelector(".pause");
   const load = list.querySelector(".load");
   const progressContainer = list.querySelector(".progress-container");
   const progressBar = list.querySelector(".progress-bar");
@@ -29,64 +72,52 @@ lists.forEach((list) => {
   i++;
 
   if (play) {
-    // Play 버튼 이벤트 수정
+    // Play 버튼 이벤트를 토글 기능으로 수정
     play.addEventListener("click", (e) => {
       const article = e.currentTarget.closest("article");
       const activePic = article.querySelector(".pic");
       activeAudio = article.querySelector("audio");
+      const playIcon = e.currentTarget.querySelector("i"); // 아이콘 요소 선택
 
       const isActive = article.classList.contains("on");
 
       if (!isActive) {
-        lists.forEach((item) => item.classList.remove("on"));
+        lists.forEach((item) => {
+          item.classList.remove("on");
+          // 다른 모든 재생 아이콘 초기화
+          const otherPlayIcon = item.querySelector(".play i");
+          if (otherPlayIcon) {
+            otherPlayIcon.classList.remove("fa-circle-pause");
+            otherPlayIcon.classList.add("fa-circle-play");
+          }
+        });
         article.classList.add("on");
       }
 
-      activePic.classList.add("on");
-      activeAudio.play();
+      // 재생 상태에 따라 토글
+      if (activeAudio.paused) {
+        // 재생 시작
+        activeAudio.play();
+        activePic.classList.add("on");
+
+        // 아이콘 변경 (재생 → 일시정지)
+        playIcon.classList.remove("fa-circle-play");
+        playIcon.classList.add("fa-circle-pause");
+      } else {
+        // 일시정지
+        activeAudio.pause();
+        activePic.classList.remove("on");
+
+        // 아이콘 변경 (일시정지 → 재생)
+        playIcon.classList.remove("fa-circle-pause");
+        playIcon.classList.add("fa-circle-play");
+      }
+
       updateProgressBar(activeAudio, progressBar);
 
+      // 이전 ended 이벤트 리스너 제거 후 새로 추가
       activeAudio.removeEventListener("ended", handleAudioEnd);
       activeAudio.addEventListener("ended", handleAudioEnd);
-
-      function handleAudioEnd() {
-        activePic.classList.remove("on");
-
-        const articles = [...document.querySelectorAll("article")];
-        let currentIndex = articles.findIndex((el) =>
-          el.classList.contains("on")
-        );
-        let nextIndex = (currentIndex + 1) % articles.length; // 마지막에서 처음으로
-
-        const nextArticle = articles[nextIndex];
-        const nextAudio = nextArticle.querySelector("audio");
-        const nextPic = nextArticle.querySelector(".pic");
-
-        nextArticle.classList.add("on");
-        nextPic.classList.add("on");
-        nextAudio.play();
-
-        updateProgressBar(
-          nextAudio,
-          nextArticle.querySelector(".progress-bar")
-        );
-      }
-    });
-  }
-
-  if (pause) {
-    // Pause 버튼 이벤트
-    pause.addEventListener("click", (e) => {
-      const article = e.currentTarget.closest("article");
-      const activePic = article.querySelector(".pic");
-      activeAudio = article.querySelector("audio");
-
-      const isActive = article.classList.contains("on");
-
-      if (isActive) {
-        activePic.classList.remove("on");
-        activeAudio.pause();
-      }
     });
   }
 
@@ -101,6 +132,7 @@ lists.forEach((list) => {
       const activePic = article.querySelector(".pic");
       activeAudio = article.querySelector("audio");
       const loadIcon = article.querySelector(".load i");
+      const playIcon = article.querySelector(".play i");
 
       const isActive = article.classList.contains("on");
 
@@ -120,6 +152,14 @@ lists.forEach((list) => {
 
             activeAudio.addEventListener("loadeddata", () => {
               activeAudio.play();
+              activePic.classList.add("on");
+
+              // 아이콘 변경 (재생 → 일시정지)
+              if (playIcon) {
+                playIcon.classList.remove("fa-circle-play");
+                playIcon.classList.add("fa-circle-pause");
+              }
+
               updateProgressBar(
                 activeAudio,
                 article.querySelector(".progress-bar")
@@ -158,30 +198,6 @@ lists.forEach((list) => {
 
         lastClickTime = currentTime;
       }
-
-      // 공통 handleAudioEnd 함수 정의
-      function handleAudioEnd() {
-        activePic.classList.remove("on");
-
-        const articles = [...document.querySelectorAll("article")];
-        let currentIndex = articles.findIndex((event) =>
-          event.classList.contains("on")
-        );
-        let nextIndex = (currentIndex + 1) % articles.length;
-
-        const nextArticle = articles[nextIndex];
-        const nextAudio = nextArticle.querySelector("audio");
-        const nextPic = nextArticle.querySelector(".pic");
-
-        nextArticle.classList.add("on");
-        nextPic.classList.add("on");
-        nextAudio.play();
-
-        updateProgressBar(
-          nextAudio,
-          nextArticle.querySelector(".progress-bar")
-        );
-      }
     });
   }
 
@@ -190,6 +206,8 @@ lists.forEach((list) => {
     progressContainer.addEventListener("click", (e) => {
       const article = e.currentTarget.closest("article");
       activeAudio = article.querySelector("audio");
+      const activePic = article.querySelector(".pic");
+      const playIcon = article.querySelector(".play i");
 
       // 위치 정보
       const rect = progressContainer.getBoundingClientRect();
@@ -208,6 +226,18 @@ lists.forEach((list) => {
 
       // 시간 표시 업데이트
       updateTimeDisplay(article, activeAudio);
+
+      // 일시정지 상태였다면 재생 시작
+      if (activeAudio.paused) {
+        activeAudio.play();
+        activePic.classList.add("on");
+
+        // 아이콘 변경 (재생 → 일시정지)
+        if (playIcon) {
+          playIcon.classList.remove("fa-circle-play");
+          playIcon.classList.add("fa-circle-pause");
+        }
+      }
     });
   }
 
@@ -224,6 +254,7 @@ lists.forEach((list) => {
 
   // 시간 포맷 함수
   function formatTime(seconds) {
+    if (isNaN(seconds)) return "00:00";
     const min = Math.floor(seconds / 60);
     const sec = Math.floor(seconds % 60);
     return `${min.toString().padStart(2, "0")}:${sec
@@ -283,6 +314,12 @@ const initMusic = () => {
     audio.load();
     audio.parentElement.previousElementSibling.classList.remove("on");
   });
+
+  // 재생 아이콘 초기화
+  document.querySelectorAll(".play i").forEach((icon) => {
+    icon.classList.remove("fa-circle-pause");
+    icon.classList.add("fa-circle-play");
+  });
 };
 
 // Prev 버튼 이벤트
@@ -292,6 +329,24 @@ prev.addEventListener("click", () => {
   frame.style.transform = `rotate(${num * deg}deg)`;
   active === 0 ? (active = length) : active--;
   activation(active, lists);
+
+  // 이전 곡으로 이동 후 자동 재생
+  const currentArticle = lists[active];
+  const audio = currentArticle.querySelector("audio");
+  const pic = currentArticle.querySelector(".pic");
+  const playIcon = currentArticle.querySelector(".play i");
+
+  activeAudio = audio;
+  audio.play();
+  pic.classList.add("on");
+
+  // 아이콘 변경 (재생 → 일시정지)
+  if (playIcon) {
+    playIcon.classList.remove("fa-circle-play");
+    playIcon.classList.add("fa-circle-pause");
+  }
+
+  updateProgressBar(audio, currentArticle.querySelector(".progress-bar"));
 });
 
 // Next 버튼 이벤트
@@ -301,4 +356,65 @@ next.addEventListener("click", () => {
   frame.style.transform = `rotate(${num * deg}deg)`;
   active === length ? (active = 0) : active++;
   activation(active, lists);
+
+  // 다음 곡으로 이동 후 자동 재생
+  const currentArticle = lists[active];
+  const audio = currentArticle.querySelector("audio");
+  const pic = currentArticle.querySelector(".pic");
+  const playIcon = currentArticle.querySelector(".play i");
+
+  activeAudio = audio;
+  audio.play();
+  pic.classList.add("on");
+
+  // 아이콘 변경 (재생 → 일시정지)
+  if (playIcon) {
+    playIcon.classList.remove("fa-circle-play");
+    playIcon.classList.add("fa-circle-pause");
+  }
+
+  updateProgressBar(audio, currentArticle.querySelector(".progress-bar"));
 });
+
+// 키보드 이벤트 - 스페이스바로 재생/일시정지 전환
+document.addEventListener("keydown", (e) => {
+  if (e.code === "Space") {
+    e.preventDefault(); // 스크롤 방지
+
+    const activeArticle = document.querySelector("article.on");
+    if (!activeArticle) return;
+
+    const audio = activeArticle.querySelector("audio");
+    const pic = activeArticle.querySelector(".pic");
+    const playIcon = activeArticle.querySelector(".play i");
+
+    if (audio.paused) {
+      audio.play();
+      pic.classList.add("on");
+
+      // 아이콘 변경 (재생 → 일시정지)
+      if (playIcon) {
+        playIcon.classList.remove("fa-circle-play");
+        playIcon.classList.add("fa-circle-pause");
+      }
+    } else {
+      audio.pause();
+      pic.classList.remove("on");
+
+      // 아이콘 변경 (일시정지 → 재생)
+      if (playIcon) {
+        playIcon.classList.remove("fa-circle-pause");
+        playIcon.classList.add("fa-circle-play");
+      }
+    }
+  }
+});
+
+// CSS 스타일 추가
+const styleSheet = document.createElement("style");
+styleSheet.textContent = `
+  .active-repeat {
+    color: #ff0;
+  }
+`;
+document.head.appendChild(styleSheet);
